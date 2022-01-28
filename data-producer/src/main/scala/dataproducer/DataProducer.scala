@@ -1,8 +1,9 @@
 package dataproducer
 
+import java.io._
 import java.text.SimpleDateFormat
 import java.util
-import java.util.{ArrayList, Date, HashMap}
+import java.util.Date
 
 /**
  * @author cys
@@ -79,6 +80,7 @@ class DataProducer {
     while (callerIndex == calleeIndex)
     val calleeName: String = teleNumber.get(calleeIndex)
 
+
     val sdf = new SimpleDateFormat("yyyy-MM-dd")
 
     var startDate: Date = null
@@ -92,11 +94,12 @@ class DataProducer {
     val resultDate = new Date(randomTs)
     val resultTimeStr: String = sdf.format(resultDate)
 
-    val hour = (Math.random() * 24).toInt
-    val minute: Int = (Math.random() * 60).toInt
-    val second: Int = (Math.random() * 60).toInt
+    val hour = (Math.random() * 24).toInt.toString
+    val minute = (Math.random() * 60).toInt.toString
+    val second = (Math.random() * 60).toInt.toString
 
-    val specificTime: String = String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second)
+
+    val specificTime: String = hour + ":" + minute + ":" + second
 
     val duration = (Math.random * 3600).toInt
 
@@ -104,5 +107,27 @@ class DataProducer {
 
     result
   }
+
+  def writeLog(filePath: String, result: String): Unit = {
+//    var osw: OutputStreamWriter = null
+//
+//    osw= new OutputStreamWriter(new FileOutputStream(filePath, true), "utf-8")
+//    osw.write(result)
+//    osw.flush()
+    var osw: OutputStreamWriter = null
+    try { //you should use append not override,so you should use FileOutputStream(filePath,true),the true denote append
+      osw = new OutputStreamWriter(new FileOutputStream(filePath, true), "utf-8")
+      osw.write(result)
+      osw.flush()
+    } catch {
+      case e: UnsupportedEncodingException =>
+        e.printStackTrace()
+      case e: FileNotFoundException =>
+        e.printStackTrace()
+      case e: IOException =>
+        e.printStackTrace()
+    }
+  }
+
 
 }
