@@ -11,6 +11,8 @@ import java.util.Properties
  */
 object PropertiesUtil {
 
+  var properties: Properties = null
+
   def getPropertyKey(propFileName: String,key: String) = {
     var properties: Properties = null
 

@@ -127,6 +127,64 @@ object HbaseUtil {
     conn.close()
   }
 
+  /**
+   * 生成行键
+   * generate a rowkey
+   * regionCode_call1_buildTime_call2_flag_duration
+   *
+   * @param regionCode
+   * @param call1
+   * @param buildTime
+   * @param call2
+   * @param flag
+   * @param duration
+   * @return
+   */
+  def genRowKey(regionCode: String, call1: String, buildTime: String, call2: String, flag: String, duration: String)= {
+    val sb = new StringBuilder
+    sb.append(regionCode + "_").append(call1 + "_").append(buildTime + "_")
+      .append(call2 + "_").append(flag + "_").append(duration);
+    sb.toString()
+  }
+
+  /**
+   * 1.您应该在同一年月份保持相同的数字存储在同一个分区中
+   * 2.因此 regionCode 取决于 call1（这是一个数字），buildTime（它们是调用构建的年份和月份），
+   *
+   * 1.you should keep same number in same year month are stored in same partition
+   * 2.so the regionCode are depended on call1(this is a number),buildTime(they are year and month that call were build),
+   *
+   * @param call1
+   * @param buildTime
+   * @param regions
+   */
+  def genRegionCode(call1: String, buildTime: String, regions: Int)= {
+    val len: Int = call1.length
+
+    //获得最后一个四分位数
+    //get last quartile in number
+    val lastPhone: String = call1.substring(len - 4)
+
+    //格式化并获取年份和月份
+    //format and get year and month
+    val ym: String = buildTime.replaceAll("-", "").replaceAll(":", "")
+      .replaceAll(" ", "").substring(0, 6)
+
+    val x: Int = Integer.valueOf(lastPhone) ^ Integer.valueOf(ym)
+    var a = 10
+    var b = 20
+    a = a ^ b
+    b = a ^ b
+    a = a ^ b
+
+    //second scatter operation
+    val y: Int = x.hashCode()
+
+    val regionCode: Int = y % regions
+
+    val df = new DecimalFormat("00")
+    df.format(regionCode)
+  }
 
 
 }

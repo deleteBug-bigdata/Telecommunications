@@ -4,6 +4,8 @@ import common.utils.PropertiesUtil
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import process.Consumer
 
+import java.util
+
 /**
  * @author cys
  * @date 2022/1/28 14:43
@@ -13,7 +15,16 @@ import process.Consumer
 class KafkaDataConsumer  extends Consumer{
 
   def getDataFromKafka(): Unit = {
-    val kafkaConsumer = new KafkaConsumer[String, String](PropertiesUtil.getProperty("hbase_consumer.properties"))
+
+    val kafkaConsumer =
+      new KafkaConsumer[String, String](PropertiesUtil.properties)
+
+    kafkaConsumer.subscribe(util.Arrays.asList(PropertiesUtil.getPropertyKey("hbase_consumer.properties","kafka.topics")))
+
+
+
+
+
 
   }
 
